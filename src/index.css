@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos personalizados para SICAVET Login */
+body {
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(to bottom right, #f8e1f4, #d8eefe); /* rosa pastel a celeste pastel */
+  margin: 0;
+  padding: 0;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h1 {
+  font-size: 2rem;
+  color: #5b5f97; /* lavanda oscuro */
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.login-box p {
+  font-size: 0.9rem;
+  color: #6b7280; /* gris pastel */
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #ffffffa8;
+  font-size: 1rem;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #a5b4fc; /* lavanda claro */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-box button:hover {
+  background-color: #818cf8;
+}
+
+.recovery {
+  font-size: 0.8rem;
+  text-align: center;
+  color: #6b7280;
+  margin-top: 10px;
+}
+body {
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(to bottom right, #fef6fb, #d6ecfa); /* fondo rosado a celeste suave */
+  margin: 0;
+  padding: 0;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.login-box h1 {
+  font-size: 1.8rem;
+  color: #5c6ac4;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.login-box p {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.login-box form input,
+.login-box form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background-color: #ffffffb0;
+  font-size: 1rem;
+  transition: border 0.3s;
+}
+
+.login-box form input:focus,
+.login-box form select:focus {
+  outline: none;
+  border-color: #a5b4fc;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #a5b4fc;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-box button:hover {
+  background-color: #818cf8;
+}
+
+.recovery {
+  font-size: 0.85rem;
+  text-align: center;
+  color: #6b7280;
+  margin-top: 1rem;
+}
