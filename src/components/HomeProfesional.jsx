@@ -29,39 +29,38 @@ function HomeProfesional({ user }) {
 
         <button
           onClick={() => navigate("/agenda")}
-        className="bg-blue-500 text-white px-4 py-3 rounded shadow hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-3 rounded shadow hover:bg-blue-600"
         >
-            📅 Agenda Médica
-            </button>
-
+          📅 Agenda Médica
+        </button>
 
         <button
-          onClick={() => alert("Inventario próximamente")}
+          onClick={() => navigate("/inventario")}
           className="bg-yellow-500 text-white px-4 py-3 rounded shadow hover:bg-yellow-600"
         >
-          🧪 Inventario de Medicamentos (Próximamente)
+          🧪 Inventario
         </button>
 
         <button
-          onClick={() => alert("Facturación próximamente")}
+          onClick={() => navigate("/facturacion")}
           className="bg-pink-500 text-white px-4 py-3 rounded shadow hover:bg-pink-600"
         >
-          💸 Emitir Boleta / Ver Pagos (Próximamente)
+          💸 Portal de Facturación
         </button>
 
         <button
-          onClick={() => alert("Estadísticas próximamente")}
+          onClick={() => navigate("/estadisticas")}
           className="bg-gray-700 text-white px-4 py-3 rounded shadow hover:bg-gray-800"
         >
-          📊 Estadísticas Clínicas (Próximamente)
+          📊 Estadísticas Clínicas 
         </button>
-        <button
-    onClick={() => navigate("/disponibilidad")}
-  className="bg-purple-600 text-white px-4 py-3 rounded shadow hover:bg-purple-700"
->
-  🕒 Configurar Disponibilidad
-</button>
 
+        <button
+          onClick={() => navigate("/disponibilidad")}
+          className="bg-purple-600 text-white px-4 py-3 rounded shadow hover:bg-purple-700"
+        >
+          🕒 Configurar Disponibilidad
+        </button>
       </div>
     </div>
   );

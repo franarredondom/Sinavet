@@ -41,46 +41,47 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     if (!role) return setError("Debes seleccionar un rol.");
     if (!rut) return setError("Debes ingresar tu RUT.");
     if (!validarRUT(rut)) return setError("El RUT ingresado no es válido.");
     if (password.length < 6) return setError("La contraseña debe tener al menos 6 caracteres.");
     if (password !== confirm) return setError("Las contraseñas no coinciden.");
-
+  
     try {
       const rutID = rut.replaceAll(".", "").replaceAll("-", "").toUpperCase();
-
       const rutDocRef = doc(db, "usuarios", rutID);
       const rutDocSnap = await getDoc(rutDocRef);
+  
       if (rutDocSnap.exists()) {
         return setError("Ya existe una cuenta con este RUT.");
       }
-
+  
       await createUserWithEmailAndPassword(auth, email, password);
-
-      // ✅ Esperar que Firebase reconozca al usuario autenticado
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const userData = {
-            role,
-            rut,
-            fullName,
-            email,
-            phone,
-            address,
-            ...(role === "profesional" && {
-              specialty,
-              level,
-              startDate,
-            }),
-          };
-
-          await setDoc(rutDocRef, userData);
-          navigate("/home");
-        }
-      });
-
+  
+      const userData = {
+        role,
+        rut,
+        fullName,
+        email,
+        phone,
+        address,
+        ...(role === "profesional" && {
+          specialty,
+          level,
+          startDate,
+        }),
+      };
+  
+      await setDoc(rutDocRef, userData);
+  
+      // Guardar en localStorage correctamente
+      localStorage.setItem("rut", rutID);
+      localStorage.setItem("userRole", role);
+  
+      // Redirigir
+      navigate("/home");
+  
     } catch (err) {
       console.error("Registro Error:", err.code);
       switch (err.code) {
@@ -99,6 +100,7 @@ function Register() {
       }
     }
   };
+  
 
   return (
     <div className="login-container">

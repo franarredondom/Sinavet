@@ -2,84 +2,127 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos personalizados para SICAVET Login */
+/* ====== FONDO GENERAL ====== */
 body {
   font-family: 'Outfit', sans-serif;
-  background: linear-gradient(to bottom right, #f8e1f4, #d8eefe); /* rosa pastel a celeste pastel */
-  margin: 0;
-  padding: 0;
+  background: linear-gradient(to bottom right, #fef6fb, #d6ecfa);
+  color: #333;
 }
 
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ====== CONTENEDOR PRINCIPAL ====== */
+.page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
 }
 
-.login-box {
-  background: rgba(255, 255, 255, 0.3);
+/* ====== TARJETAS Y BLOQUES ====== */
+.card {
+  background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 40px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.login-box h1 {
-  font-size: 2rem;
-  color: #5b5f97; /* lavanda oscuro */
+/* ====== TÍTULOS ====== */
+h1,
+h2,
+h3 {
+  color: #5b5f97;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
 }
 
-.login-box p {
-  font-size: 0.9rem;
-  color: #6b7280; /* gris pastel */
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.login-box input {
+/* ====== INPUTS Y SELECTS ====== */
+input,
+select,
+textarea {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: none;
-  border-radius: 10px;
-  background: #ffffffa8;
-  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  transition: border 0.3s, box-shadow 0.3s;
 }
 
-.login-box button {
-  width: 100%;
-  padding: 12px;
-  background-color: #a5b4fc; /* lavanda claro */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #a5b4fc;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(165, 180, 252, 0.3);
+}
+
+/* ====== BOTONES ====== */
+button {
+  background-color: #a5b4fc;
   color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: background 0.3s, transform 0.2s;
   cursor: pointer;
-  transition: background 0.3s ease;
+  display: inline-block;
 }
 
-.login-box button:hover {
+button:hover {
   background-color: #818cf8;
+  transform: scale(1.02);
 }
 
-.recovery {
-  font-size: 0.8rem;
-  text-align: center;
-  color: #6b7280;
-  margin-top: 10px;
-}
-body {
-  font-family: 'Outfit', sans-serif;
-  background: linear-gradient(to bottom right, #fef6fb, #d6ecfa); /* fondo rosado a celeste suave */
-  margin: 0;
-  padding: 0;
+/* ====== TABLAS ====== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
+th,
+td {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background-color: #eef2ff;
+  color: #374151;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* ====== GRID ADAPTATIVO ====== */
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -113,22 +156,20 @@ body {
   margin-bottom: 1.5rem;
 }
 
-.login-box form input,
-.login-box form select {
+.login-box form input {
   width: 100%;
   padding: 12px;
-  margin-bottom: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  background-color: #ffffffb0;
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #ffffffa8;
   font-size: 1rem;
-  transition: border 0.3s;
 }
 
-.login-box form input:focus,
-.login-box form select:focus {
+.login-box form input:focus {
   outline: none;
-  border-color: #a5b4fc;
+  border: 2px solid #a5b4fc;
+  background: #fff;
 }
 
 .login-box button {
@@ -137,19 +178,27 @@ body {
   background-color: #a5b4fc;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s ease;
 }
 
 .login-box button:hover {
   background-color: #818cf8;
 }
+.page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
 
-.recovery {
-  font-size: 0.85rem;
-  text-align: center;
-  color: #6b7280;
-  margin-top: 1rem;
+.card {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(14px);
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }

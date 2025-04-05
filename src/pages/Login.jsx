@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -16,10 +16,8 @@ function Login() {
     setError("");
 
     try {
-      // 1. Iniciar sesión con Firebase Auth
       await signInWithEmailAndPassword(auth, email, password);
 
-      // 2. Buscar al usuario en Firestore por su email
       const q = query(collection(db, "usuarios"), where("email", "==", email));
       const querySnapshot = await getDocs(q);
 
@@ -28,7 +26,6 @@ function Login() {
         return;
       }
 
-      // 3. Obtener el RUT y guardarlo en localStorage
       const docSnap = querySnapshot.docs[0];
       const userData = docSnap.data();
       const rutID = docSnap.id;
@@ -36,7 +33,6 @@ function Login() {
       localStorage.setItem("rut", rutID);
       localStorage.setItem("userRole", userData.role);
 
-      // 4. Redirigir al Home
       navigate("/home");
     } catch (err) {
       console.error("Login error:", err.code);
@@ -53,6 +49,21 @@ function Login() {
         default:
           setError("Error al iniciar sesión.");
       }
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      alert("Ingresa tu correo para recuperar la contraseña.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert("Se ha enviado un correo para restablecer tu contraseña.");
+    } catch (error) {
+      console.error("Error al enviar correo:", error.message);
+      alert("Error al enviar el correo. Revisa tu dirección.");
     }
   };
 
@@ -80,14 +91,26 @@ function Login() {
             required
           />
 
-          <button type="submit">Ingresar</button>
+          <button type="submit" className="mb-3">Ingresar</button>
         </form>
 
-        <div className="recovery mt-2">
-          ¿No tienes cuenta?{" "}
-          <span className="underline cursor-pointer" onClick={() => navigate("/register")}>
-            Regístrate aquí
-          </span>
+        <div className="text-center text-sm text-gray-700 mt-2 space-y-2">
+          <p
+            onClick={handleResetPassword}
+            className="underline text-indigo-600 hover:text-indigo-800 cursor-pointer"
+          >
+            ¿Olvidaste tu contraseña?
+          </p>
+
+          <p>
+            ¿No tienes cuenta?{" "}
+            <span
+              className="underline text-indigo-700 cursor-pointer hover:text-indigo-900"
+              onClick={() => navigate("/register")}
+            >
+              Regístrate aquí
+            </span>
+          </p>
         </div>
       </div>
     </div>
