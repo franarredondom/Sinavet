@@ -4,6 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import HomeProfesional from "../components/HomeProfesional";
 import HomeTutor from "../components/HomeTutor";
+import HomeLaboratorio from "../components/HomeLaboratorio"; // <-- AGREGAR ESTO
 
 function Home() {
   const [userData, setUserData] = useState(null);
@@ -39,11 +40,21 @@ function Home() {
   if (loading) return <div className="p-6">Cargando perfil...</div>;
   if (!userData) return <div className="p-6 text-red-600">No se pudo cargar el usuario.</div>;
 
-  return userData.role === "profesional" ? (
-    <HomeProfesional user={userData} />
-  ) : (
-    <HomeTutor user={userData} />
-  );
+  // 🔥 Ahora manejamos cada rol por separado
+  if (userData.role === "profesional") {
+    return <HomeProfesional user={userData} />;
+  }
+
+  if (userData.role === "tutor") {
+    return <HomeTutor user={userData} />;
+  }
+
+  if (userData.role === "laboratorio") {
+    return <HomeLaboratorio user={userData} />;
+  }
+
+  // Si el rol no es ninguno conocido
+  return <div className="p-6 text-red-600">Rol no autorizado.</div>;
 }
 
 export default Home;

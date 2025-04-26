@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { Modal } from "antd";
 import "../index.css";
 
 function Register() {
@@ -18,7 +19,6 @@ function Register() {
   const [specialty, setSpecialty] = useState("");
   const [level, setLevel] = useState("");
   const [startDate, setStartDate] = useState("");
-  const [error, setError] = useState("");
 
   const validarRUT = (rutCompleto) => {
     rutCompleto = rutCompleto.replaceAll(".", "").replaceAll("-", "").toUpperCase();
@@ -38,27 +38,44 @@ function Register() {
     return dv === dvFinal;
   };
 
+  const mostrarError = (mensaje) => {
+    Modal.error({
+      title: "Error en el registro",
+      content: mensaje,
+    });
+  };
+
+  const mostrarExito = () => {
+    Modal.success({
+      title: "¡Registro exitoso!",
+      content: "Serás redirigido al portal...",
+      onOk: () => navigate("/home"),
+    });
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
-  
-    if (!role) return setError("Debes seleccionar un rol.");
-    if (!rut) return setError("Debes ingresar tu RUT.");
-    if (!validarRUT(rut)) return setError("El RUT ingresado no es válido.");
-    if (password.length < 6) return setError("La contraseña debe tener al menos 6 caracteres.");
-    if (password !== confirm) return setError("Las contraseñas no coinciden.");
-  
+
+    if (!role) return mostrarError("Debes seleccionar un rol.");
+    if (!rut) return mostrarError("Debes ingresar tu RUT.");
+    if (!validarRUT(rut)) return mostrarError("El RUT ingresado no es válido.");
+    if (password.length < 6) return mostrarError("La contraseña debe tener al menos 6 caracteres.");
+    if (password !== confirm) return mostrarError("Las contraseñas no coinciden.");
+    if (role === "profesional" && (!specialty || !level || !startDate)) {
+      return mostrarError("Debes completar la información profesional.");
+    }
+
     try {
       const rutID = rut.replaceAll(".", "").replaceAll("-", "").toUpperCase();
       const rutDocRef = doc(db, "usuarios", rutID);
       const rutDocSnap = await getDoc(rutDocRef);
-  
+
       if (rutDocSnap.exists()) {
-        return setError("Ya existe una cuenta con este RUT.");
+        return mostrarError("Ya existe una cuenta con este RUT.");
       }
-  
+
       await createUserWithEmailAndPassword(auth, email, password);
-  
+
       const userData = {
         role,
         rut,
@@ -72,43 +89,38 @@ function Register() {
           startDate,
         }),
       };
-  
+
       await setDoc(rutDocRef, userData);
-  
-      // Guardar en localStorage correctamente
+
       localStorage.setItem("rut", rutID);
       localStorage.setItem("userRole", role);
-  
-      // Redirigir
-      navigate("/home");
-  
+
+      mostrarExito();
+
     } catch (err) {
       console.error("Registro Error:", err.code);
       switch (err.code) {
         case "auth/email-already-in-use":
-          setError("Este correo ya está registrado.");
+          mostrarError("Este correo ya está registrado.");
           break;
         case "auth/invalid-email":
-          setError("El correo ingresado no es válido.");
+          mostrarError("El correo ingresado no es válido.");
           break;
         case "auth/weak-password":
-          setError("La contraseña debe tener al menos 6 caracteres.");
+          mostrarError("La contraseña debe tener al menos 6 caracteres.");
           break;
         default:
-          setError("Ocurrió un error inesperado. Intenta nuevamente.");
+          mostrarError("Ocurrió un error inesperado. Intenta nuevamente.");
           break;
       }
     }
   };
-  
 
   return (
     <div className="login-container">
       <div className="login-box">
         <h1>Registro de Usuario</h1>
         <p>Completa los datos según tu rol</p>
-
-        {error && <div className="text-sm text-red-600 text-center mb-4">{error}</div>}
 
         <form onSubmit={handleRegister}>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Rol</label>
@@ -121,6 +133,7 @@ function Register() {
             <option value="">Selecciona tu rol</option>
             <option value="tutor">Tutor de mascota</option>
             <option value="profesional">Profesional veterinario</option>
+            <option value="laboratorio">Personal de laboratorio</option>
           </select>
 
           <label className="block text-sm font-semibold text-gray-700 mb-1">RUT</label>

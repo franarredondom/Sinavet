@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../services/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { Card, Row, Col, Button } from "antd";
 
 function HomeTutor() {
   const [user, setUser] = useState(null);
@@ -30,7 +31,7 @@ function HomeTutor() {
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center mt-20">
+      <div className="flex justify-center items-center h-screen">
         <p className="text-indigo-500 text-lg animate-pulse">Cargando información del tutor...</p>
       </div>
     );
@@ -62,39 +63,52 @@ function HomeTutor() {
       desc: "Contáctanos directamente",
       ruta: "/contacto",
     },
+    {
+      titulo: "🧪 Resultados de Exámenes",
+      desc: "Consulta los resultados de laboratorio de tus mascotas",
+      ruta: "/resultados-laboratorio",
+    },
   ];
 
   return (
-    <div className="page-container">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-indigo-700 mb-2 drop-shadow">
-          ¡Hola {user.fullName}!
-        </h1>
-        <p className="text-gray-600 text-lg">
-          Bienvenido/a al portal de tutor de mascotas de <strong>SICAVET</strong>
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {acciones.map((item, i) => (
-          <div
-            key={i}
-            onClick={() => navigate(item.ruta)}
-            className="card hover:shadow-lg hover:scale-[1.02] transition cursor-pointer text-center"
-          >
-            <h2 className="text-xl font-bold text-indigo-600">{item.titulo}</h2>
-            <p className="text-gray-700 mt-2">{item.desc}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center">
-        <button
+    <div className="min-h-screen bg-[#f5f7fa]">
+      
+      {/* Header */}
+      <div className="bg-white shadow-md px-8 py-4 flex items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-indigo-700">¡Hola, {user.fullName}!</h1>
+          <p className="text-gray-500 text-sm">
+            Bienvenido/a al portal de tutor de <strong>SICAVET</strong>
+          </p>
+        </div>
+        <div className="flex-grow"></div> {/* Esto empuja el botón totalmente a la derecha */}
+        <Button
+          type="primary"
+          danger
           onClick={cerrarSesion}
-          className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+          className="rounded-lg px-5 py-2 font-semibold"
         >
           🔒 Cerrar sesión
-        </button>
+        </Button>
+      </div>
+
+      {/* Contenido */}
+      <div className="p-8">
+        <Row gutter={[24, 24]} justify="center">
+          {acciones.map((item, i) => (
+            <Col xs={24} sm={12} md={8} key={i}>
+              <Card
+                hoverable
+                onClick={() => navigate(item.ruta)}
+                className="rounded-xl transition-all duration-300 shadow hover:shadow-lg cursor-pointer"
+                style={{ height: "180px", display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "center" }}
+              >
+                <h2 className="text-2xl font-bold text-indigo-600">{item.titulo}</h2>
+                <p className="text-gray-600 mt-2">{item.desc}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       </div>
     </div>
   );

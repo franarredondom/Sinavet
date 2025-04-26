@@ -11,6 +11,11 @@ import Disponibilidad from "./pages/Disponibilidad";
 import Inventario from "./pages/Inventario";
 import PortalFacturacion from "./pages/PortalFacturacion";
 import EstadisticasClinicas from "./pages/EstadisticasClinicas";
+import Laboratorio from "./pages/Laboratorio";
+import SubirExamen from "./pages/SubirExamen";
+import CrearExamen from "./pages/CrearExamen";
+import ResultadoExamen from "./pages/ResultadoExamen";
+import ResultadosLaboratorioTutor from "./components/ResultadosLaboratorioTutor";
 
 function App() {
   return (
@@ -28,6 +33,12 @@ function App() {
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/facturacion" element={<PortalFacturacion />} />
         <Route path="/estadisticas" element={<EstadisticasClinicas />} />
+        <Route path="/laboratorio" element={<Laboratorio />} />
+        <Route path="/subir-examen" element={<SubirExamen />} />
+        <Route path="/crear-examen" element={<CrearExamen />} />
+        <Route path="/resultado-examen/:id" element={<ResultadoExamen />} />
+        <Route path="/resultados-laboratorio" element={<ResultadosLaboratorioTutor rutTutor={localStorage.getItem('rut')} />} />
+
       </Routes>
     </Router>
   );

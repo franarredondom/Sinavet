@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  obtenerMascotaPorId,
-  actualizarMascota,
-} from "../services/pacientesService";
+import { obtenerMascotaPorId, actualizarMascota } from "../services/pacientesService";
+import SolicitarExamenModal from "../components/SolicitarExamenModal";
+import { Space, Button } from "antd";
 
 function ConsultaPaciente() {
   const { id } = useParams();
@@ -11,6 +10,8 @@ function ConsultaPaciente() {
   const [mascota, setMascota] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+
   const [consulta, setConsulta] = useState({
     fecha: new Date().toISOString().slice(0, 10),
     tipo: "",
@@ -53,16 +54,25 @@ function ConsultaPaciente() {
     }
   };
 
-  if (loading) return <div className="p-6">Cargando paciente...</div>;
-  if (error) return <div className="p-6 text-red-600">{error}</div>;
+  if (loading) return <div className="p-6 text-center text-indigo-600 animate-pulse">Cargando paciente...</div>;
+  if (error) return <div className="p-6 text-center text-red-600">{error}</div>;
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-indigo-600 mb-4">
+      <h1 className="text-2xl font-bold text-indigo-600 mb-6 text-center">
         Nueva consulta para {mascota.nombre}
       </h1>
 
-      <form onSubmit={guardarConsulta} className="bg-white shadow rounded p-4 space-y-4">
+      {/* Modal de Solicitar Examen */}
+      <SolicitarExamenModal
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
+        mascota={mascota}
+        profesional={consulta.profesional}
+      />
+
+      {/* Formulario de Consulta */}
+      <form onSubmit={guardarConsulta} className="bg-white shadow rounded p-6 space-y-5">
         <div>
           <label className="block font-medium mb-1">Fecha</label>
           <input
@@ -149,12 +159,29 @@ function ConsultaPaciente() {
           required
         />
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-        >
-          Guardar consulta
-        </button>
+        {/* Botones abajo */}
+        <div className="flex justify-center mt-8">
+  <Space direction="vertical" size="large" className="w-full sm:w-auto">
+    <Button
+      type="primary"
+      onClick={() => setOpenModal(true)}
+      size="large"
+      className="bg-indigo-600 hover:bg-indigo-700 font-bold w-full"
+    >
+      🧪 Solicitar Examen
+    </Button>
+
+    <Button
+      type="primary"
+      htmlType="submit"
+      size="large"
+      className="bg-green-600 hover:bg-green-700 font-bold w-full"
+    >
+      💾 Guardar Consulta
+    </Button>
+  </Space>
+</div>
+
       </form>
     </div>
   );
