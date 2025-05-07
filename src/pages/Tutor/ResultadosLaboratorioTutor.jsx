@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../services/firebaseConfig";
+import { db } from "../../services/firebaseConfig";
 import { Card, Tabs, Spin, Empty } from "antd";
 
 const { TabPane } = Tabs;

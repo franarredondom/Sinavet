@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
-import { db } from "../services/firebaseConfig";
-import FichaMascota from "../components/FichaMascota";
+import { db } from "../../services/firebaseConfig";
+import FichaMascota from "../../components/FichaMascota";
 
 function Pacientes() {
   const [rut, setRut] = useState("");

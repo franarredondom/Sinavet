@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { auth, db } from "../services/firebaseConfig";
+import { auth, db } from "../../services/firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import "../index.css";
+import "../../index.css";
+
 
 function Login() {
   const navigate = useNavigate();

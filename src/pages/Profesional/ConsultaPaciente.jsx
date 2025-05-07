@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { obtenerMascotaPorId, actualizarMascota } from "../services/pacientesService";
-import SolicitarExamenModal from "../components/SolicitarExamenModal";
+import { obtenerMascotaPorId, actualizarMascota } from "../../services/pacientesService";
+import SolicitarExamenModal from "../../components/SolicitarExamenModal";
 import { Space, Button } from "antd";
 
 function ConsultaPaciente() {

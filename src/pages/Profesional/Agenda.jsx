@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, query, where, getDocs, addDoc, Timestamp } from "firebase/firestore";
-import { db } from "../services/firebaseConfig";
+import { db } from "../../services/firebaseConfig";
 
 function Agenda() {
   const [rut, setRut] = useState("");

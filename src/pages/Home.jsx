@@ -4,7 +4,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import HomeProfesional from "../components/HomeProfesional";
 import HomeTutor from "../components/HomeTutor";
-import HomeLaboratorio from "../components/HomeLaboratorio"; // <-- AGREGAR ESTO
+import HomeLaboratorio from "../components/HomeLaboratorio";
+import HomeRecepcion from "../components/HomeRecepcion"; 
 
 function Home() {
   const [userData, setUserData] = useState(null);
@@ -51,6 +52,9 @@ function Home() {
 
   if (userData.role === "laboratorio") {
     return <HomeLaboratorio user={userData} />;
+  }
+  if (userData.role === "recepcion") {
+    return <HomeRecepcion user={userData} />;
   }
 
   // Si el rol no es ninguno conocido

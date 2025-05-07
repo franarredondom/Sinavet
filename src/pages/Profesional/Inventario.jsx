@@ -3,7 +3,7 @@ import {
   obtenerInventario,
   agregarProducto,
   eliminarProducto,
-} from "../services/inventarioService";
+} from "../../services/inventarioService";
 
 function Inventario() {
   const [productos, setProductos] = useState([]);

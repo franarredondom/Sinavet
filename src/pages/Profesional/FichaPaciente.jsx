@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { obtenerMascotaPorId, actualizarMascota } from "../services/pacientesService";
+import { obtenerMascotaPorId, actualizarMascota } from "../../services/pacientesService";
 
 function FichaPaciente() {
   const { id } = useParams();

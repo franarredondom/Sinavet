@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { obtenerMascotasPorRut } from "../services/pacientesService";
-import { subirExamen } from "../services/laboratorioService";
+import { obtenerMascotasPorRut } from "../../services/pacientesService";
+import { subirExamen } from "../../services/laboratorioService";
 
 function Laboratorio() {
   const [rutTutor, setRutTutor] = useState("");

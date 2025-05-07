@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../services/firebaseConfig";
+import { db } from "../../services/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 function CrearExamen() {

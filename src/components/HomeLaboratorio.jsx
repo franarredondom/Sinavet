@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { Table, Card, Button, Tag, Input, Statistic, Row, Col, Tabs, message } from "antd";
+import { Table, Card, Button, Tag, Input, Statistic, Row, Col, Tabs, message, Select } from "antd";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../services/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 function HomeLaboratorio() {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -13,6 +14,7 @@ function HomeLaboratorio() {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [tabKey, setTabKey] = useState("pendientes");
+  const [prioridadFiltro, setPrioridadFiltro] = useState("todas");
 
   const navigate = useNavigate();
 
@@ -39,39 +41,37 @@ function HomeLaboratorio() {
   const pendientes = solicitudes.filter((s) => !s.resultadoSubido);
   const procesados = solicitudes.filter((s) => s.resultadoSubido);
 
-  const handleSearch = (value) => {
-    setSearchText(value);
+  const aplicarFiltroPrioridad = (data) => {
+    if (prioridadFiltro === "todas") return data;
+    return data.filter((s) => s.prioridad === prioridadFiltro);
   };
 
   const filterData = (data) => {
-    return data.filter(
-      (s) =>
-        s.mascota?.toLowerCase().includes(searchText.toLowerCase()) ||
-        s.examen?.toLowerCase().includes(searchText.toLowerCase())
+    return aplicarFiltroPrioridad(
+      data.filter(
+        (s) =>
+          s.mascota?.toLowerCase().includes(searchText.toLowerCase()) ||
+          s.examen?.toLowerCase().includes(searchText.toLowerCase()) ||
+          s.tutorRut?.toLowerCase().includes(searchText.toLowerCase())
+      )
     );
   };
 
   const columnasPendientes = [
+    { title: "Mascota", dataIndex: "mascota", key: "mascota" },
+    { title: "Examen", dataIndex: "examen", key: "examen" },
+    { title: "Tipo", dataIndex: "tipo", key: "tipo" },
     {
-      title: "Mascota",
-      dataIndex: "mascota",
-      key: "mascota",
+      title: "Prioridad",
+      key: "prioridad",
+      render: (_, record) =>
+        record.prioridad === "Urgente" ? (
+          <Tag color="red">Urgente</Tag>
+        ) : (
+          <Tag color="blue">Normal</Tag>
+        ),
     },
-    {
-      title: "Examen",
-      dataIndex: "examen",
-      key: "examen",
-    },
-    {
-      title: "Tipo",
-      dataIndex: "tipo",
-      key: "tipo",
-    },
-    {
-      title: "Fecha",
-      dataIndex: "fecha",
-      key: "fecha",
-    },
+    { title: "Fecha", dataIndex: "fecha", key: "fecha" },
     {
       title: "Acción",
       key: "accion",
@@ -84,26 +84,20 @@ function HomeLaboratorio() {
   ];
 
   const columnasProcesados = [
+    { title: "Mascota", dataIndex: "mascota", key: "mascota" },
+    { title: "Examen", dataIndex: "examen", key: "examen" },
+    { title: "Tipo", dataIndex: "tipo", key: "tipo" },
     {
-      title: "Mascota",
-      dataIndex: "mascota",
-      key: "mascota",
+      title: "Prioridad",
+      key: "prioridad",
+      render: (_, record) =>
+        record.prioridad === "Urgente" ? (
+          <Tag color="red">Urgente</Tag>
+        ) : (
+          <Tag color="blue">Normal</Tag>
+        ),
     },
-    {
-      title: "Examen",
-      dataIndex: "examen",
-      key: "examen",
-    },
-    {
-      title: "Tipo",
-      dataIndex: "tipo",
-      key: "tipo",
-    },
-    {
-      title: "Fecha",
-      dataIndex: "fecha",
-      key: "fecha",
-    },
+    { title: "Fecha", dataIndex: "fecha", key: "fecha" },
     {
       title: "Estado",
       key: "estado",
@@ -140,17 +134,28 @@ function HomeLaboratorio() {
             </Col>
           </Row>
 
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
             <Search
               placeholder="Buscar por mascota o examen..."
-              onSearch={handleSearch}
-              onChange={(e) => handleSearch(e.target.value)}
+              onSearch={setSearchText}
+              onChange={(e) => setSearchText(e.target.value)}
               style={{ width: 300 }}
               allowClear
             />
+            <Select
+              value={prioridadFiltro}
+              onChange={setPrioridadFiltro}
+              style={{ width: 220 }}
+            >
+              <Option value="todas">Todas las prioridades</Option>
+              <Option value="Normal">Solo Normal</Option>
+              <Option value="Urgente">Solo Urgente</Option>
+            </Select>
             <Button
               type="primary"
-              onClick={() => message.info("Selecciona un examen en Pendientes para subir resultado.")}
+              onClick={() =>
+                message.info("Selecciona un examen en Pendientes para subir resultado.")
+              }
             >
               Subir Resultado Manualmente
             </Button>
@@ -192,3 +197,4 @@ function HomeLaboratorio() {
 }
 
 export default HomeLaboratorio;
+// 🔥 Este componente es el portal de laboratorio clínico, donde los laboratorios pueden ver y gestionar las solicitudes de exámenes.
