@@ -43,7 +43,7 @@ function SolicitarExamenModal({ open, onCancel, mascota, profesional }) {
     const hide = message.loading("Procesando solicitud...", 0);
 
     try {
-      const fecha = new Date().toLocaleDateString();
+      const fecha = new Date().toISOString();
       const ordenID = Math.floor(1000 + Math.random() * 9000);
 
       const ordenData = {

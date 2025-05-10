@@ -5,9 +5,10 @@
 /* ====== FONDO GENERAL ====== */
 body {
   font-family: 'Outfit', sans-serif;
-  background: linear-gradient(to bottom right, #fef6fb, #d6ecfa);
+  background-color: #f5f7fa; /* gris azulado */
   color: #333;
 }
+
 
 /* ====== CONTENEDOR PRINCIPAL ====== */
 .page-container {
@@ -201,4 +202,9 @@ tr:hover {
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+}
+/* SOLO Login y Register usan fondo degradado */
+.login-page {
+  background: linear-gradient(to bottom right, #fef6fb, #d6ecfa);
+  min-height: 100vh;
 }

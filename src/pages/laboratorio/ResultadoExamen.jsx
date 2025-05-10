@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../services/firebaseConfig";
-import { Card, Form, Input, Button, Modal, Spin } from "antd";
+import { Card, Form, Input, Button, Modal, Spin, Descriptions, Tag } from "antd";
 
 function ResultadoExamen() {
   const { id } = useParams();
@@ -16,23 +16,18 @@ function ResultadoExamen() {
   useEffect(() => {
     const fetchSolicitud = async () => {
       try {
-        const solicitudRef = doc(db, "solicitudesExamenes", id);
-        const solicitudSnap = await getDoc(solicitudRef);
+        const ref = doc(db, "solicitudesExamenes", id);
+        const snap = await getDoc(ref);
 
-        if (solicitudSnap.exists()) {
-          setSolicitud(solicitudSnap.data());
-        } else {
-          Modal.error({
-            title: "Error",
-            content: "No se encontró la solicitud.",
-            onOk: () => navigate("/laboratorio"),
-          });
+        if (!snap.exists()) {
+          throw new Error("No se encontró la solicitud.");
         }
+
+        setSolicitud({ id: snap.id, ...snap.data() });
       } catch (error) {
-        console.error(error);
         Modal.error({
           title: "Error",
-          content: "Ocurrió un error al cargar el examen.",
+          content: error.message,
           onOk: () => navigate("/laboratorio"),
         });
       } finally {
@@ -46,12 +41,12 @@ function ResultadoExamen() {
   const handleSubmit = async (values) => {
     setSubmitting(true);
     try {
-      const solicitudRef = doc(db, "solicitudesExamenes", id);
+      const ref = doc(db, "solicitudesExamenes", id);
 
-      await updateDoc(solicitudRef, {
+      await updateDoc(ref, {
         resultadoSubido: true,
-        resultadoTexto: values.resultado,
-        observaciones: values.observaciones || "",
+        resultadoTexto: values.resultado.trim(),
+        observaciones: values.observaciones?.trim() || "",
       });
 
       Modal.success({
@@ -60,10 +55,10 @@ function ResultadoExamen() {
         onOk: () => navigate("/laboratorio"),
       });
     } catch (error) {
-      console.error(error);
+      console.error("Error al subir resultado:", error);
       Modal.error({
         title: "Error",
-        content: "Ocurrió un error al subir el resultado.",
+        content: "Ocurrió un error al guardar el resultado.",
       });
     } finally {
       setSubmitting(false);
@@ -73,23 +68,27 @@ function ResultadoExamen() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Spin tip="Cargando examen..." size="large" />
+        <Spin tip="Cargando solicitud..." size="large" />
       </div>
     );
   }
 
   return (
     <div className="p-6 bg-[#f5f7fa] min-h-screen flex justify-center">
-      <Card
-        title="Subir Resultado de Examen"
-        className="w-full max-w-2xl"
-      >
-        <div className="mb-6">
-          <p><strong>Mascota:</strong> {solicitud.mascota}</p>
-          <p><strong>Examen:</strong> {solicitud.examen}</p>
-          <p><strong>Tipo:</strong> {solicitud.tipo}</p>
-          <p><strong>Fecha:</strong> {solicitud.fecha}</p>
-        </div>
+      <Card title="📝 Registro de Resultado de Examen" className="w-full max-w-3xl shadow-lg">
+        <Descriptions bordered column={1} size="small" className="mb-6">
+          <Descriptions.Item label="Mascota">{solicitud.mascota}</Descriptions.Item>
+          <Descriptions.Item label="RUT del Tutor">{solicitud.tutorRut}</Descriptions.Item>
+          <Descriptions.Item label="Tipo de Examen">{solicitud.tipo}</Descriptions.Item>
+          <Descriptions.Item label="Examen">{solicitud.examen}</Descriptions.Item>
+          <Descriptions.Item label="Fecha de Solicitud">{solicitud.fecha}</Descriptions.Item>
+          <Descriptions.Item label="Prioridad">
+            <Tag color={solicitud.prioridad === "Urgente" ? "red" : "blue"}>
+              {solicitud.prioridad}
+            </Tag>
+          </Descriptions.Item>
+          <Descriptions.Item label="Solicitado por">{solicitud.profesional || "No registrado"}</Descriptions.Item>
+        </Descriptions>
 
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
@@ -97,16 +96,19 @@ function ResultadoExamen() {
             name="resultado"
             rules={[{ required: true, message: "Debes ingresar el resultado." }]}
           >
-            <Input.TextArea rows={6} placeholder="Escribe aquí el resultado del examen..." />
+            <Input.TextArea
+              rows={6}
+              placeholder="Describa aquí el resultado del examen realizado..."
+            />
           </Form.Item>
 
           <Form.Item label="Observaciones (opcional)" name="observaciones">
-            <Input.TextArea rows={3} placeholder="Observaciones adicionales..." />
+            <Input.TextArea rows={3} placeholder="Notas adicionales..." />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={submitting} block>
-              Subir Resultado
+            <Button type="primary" htmlType="submit" block loading={submitting}>
+              📤 Guardar Resultado
             </Button>
           </Form.Item>
         </Form>

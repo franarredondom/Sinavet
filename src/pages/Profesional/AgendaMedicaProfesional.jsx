@@ -13,7 +13,8 @@ import { Table, Button, Tag, Spin, message } from "antd";
 import { useNavigate } from "react-router-dom";
 
 function AgendaMedicaProfesional() {
-  const [citas, setCitas] = useState([]);
+  const [pendientes, setPendientes] = useState([]);
+  const [atendidas, setAtendidas] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -25,16 +26,17 @@ function AgendaMedicaProfesional() {
         const fin = new Date(fechaHoy.setHours(23, 59, 59, 999));
         const rutProfesional = localStorage.getItem("rut");
 
-        const q = query(
+        const baseQuery = query(
           collection(db, "citas"),
           where("fecha", ">=", Timestamp.fromDate(inicio)),
           where("fecha", "<=", Timestamp.fromDate(fin)),
-          where("profesional", "==", rutProfesional),
-          where("llegada", "==", true)
+          where("profesional", "==", rutProfesional)
         );
 
-        const snapshot = await getDocs(q);
-        const citasData = [];
+        const snapshot = await getDocs(baseQuery);
+
+        const pendientes = [];
+        const atendidas = [];
 
         for (const docSnap of snapshot.docs) {
           const cita = docSnap.data();
@@ -44,14 +46,21 @@ function AgendaMedicaProfesional() {
             ? mascotaSnap.data().nombre
             : "Desconocida";
 
-          citasData.push({
+          const item = {
             id: docSnap.id,
             ...cita,
             nombreMascota,
-          });
+          };
+
+          if (cita.estado === "pendiente" && cita.llegada === true) {
+            pendientes.push(item);
+          } else if (cita.estado === "atendido") {
+            atendidas.push(item);
+          }
         }
 
-        setCitas(citasData);
+        setPendientes(pendientes);
+        setAtendidas(atendidas);
       } catch (err) {
         console.error("Error al obtener citas:", err);
         message.error("No se pudieron cargar las citas.");
@@ -63,7 +72,7 @@ function AgendaMedicaProfesional() {
     fetchCitas();
   }, []);
 
-  const columnas = [
+  const columnas = (mostrarBoton = true) => [
     {
       title: "Mascota",
       dataIndex: "nombreMascota",
@@ -82,24 +91,36 @@ function AgendaMedicaProfesional() {
     },
     {
       title: "Estado",
-      dataIndex: "llegada",
-      key: "llegada",
-      render: () => <Tag color="green">Llegó</Tag>,
+      dataIndex: "estado",
+      key: "estado",
+      render: (estado) => (
+        <Tag color={estado === "atendido" ? "blue" : "green"}>
+          {estado.charAt(0).toUpperCase() + estado.slice(1)}
+        </Tag>
+      ),
     },
-    {
-        title: "Acción",
-        key: "accion",
-        render: (_, record) => (
-          <Button
-            type="primary"
-            onClick={() => navigate(`/consulta/${record.mascotaId}?citaId=${record.id}`)}
-
-          >
-            Atender
-          </Button>
-        ),
-      },
-    ];
+    ...(mostrarBoton
+      ? [
+          {
+            title: "Acción",
+            key: "accion",
+            render: (_, record) =>
+              record.llegada ? (
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    navigate(`/consulta/${record.mascotaId}?citaId=${record.id}`)
+                  }
+                >
+                  Atender
+                </Button>
+              ) : (
+                <Tag color="orange">Esperando llegada</Tag>
+              ),
+          },
+        ]
+      : []),
+  ];
 
   return (
     <div className="p-6">
@@ -107,13 +128,25 @@ function AgendaMedicaProfesional() {
       {loading ? (
         <Spin />
       ) : (
-        <Table
-          dataSource={citas}
-          columns={columnas}
-          rowKey="id"
-          bordered
-          pagination={{ pageSize: 6 }}
-        />
+        <>
+          <Table
+            title={() => "⏳ Pendientes por Atender"}
+            dataSource={pendientes}
+            columns={columnas(true)}
+            rowKey="id"
+            bordered
+            pagination={false}
+            className="mb-8"
+          />
+          <Table
+            title={() => "✅ Citas Atendidas"}
+            dataSource={atendidas}
+            columns={columnas(false)}
+            rowKey="id"
+            bordered
+            pagination={false}
+          />
+        </>
       )}
     </div>
   );

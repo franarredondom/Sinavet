@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Card, Row, Col, Typography, Button, Space } from "antd";
+import { Card, Row, Col, Typography, Space } from "antd";
 import {
   UserAddOutlined,
   UserOutlined,
@@ -7,8 +7,8 @@ import {
   ExperimentOutlined,
   BarChartOutlined,
   MedicineBoxOutlined,
-  DollarOutlined,
   ScheduleOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 
 const { Title } = Typography;
@@ -25,7 +25,6 @@ function HomeProfesional({ user }) {
         Especialidad: {user.specialty}
       </p>
 
-      {/* Panel agrupado */}
       <Row gutter={[24, 24]}>
         {/* 🐶 Gestión de Pacientes */}
         <Col span={24}>
@@ -69,7 +68,7 @@ function HomeProfesional({ user }) {
               title="Exámenes"
               hoverable
               style={{ width: 220 }}
-              onClick={() => navigate("/laboratorio")}
+              onClick={() => navigate("/revisar-examenes")}
             >
               <ExperimentOutlined style={{ fontSize: 40, color: "#eb2f96" }} />
               <p className="mt-3">Revisión de exámenes</p>
@@ -91,13 +90,13 @@ function HomeProfesional({ user }) {
               <p className="mt-3">Control de insumos</p>
             </Card>
             <Card
-              title="Estadísticas"
+              title="Historial Clínico"
               hoverable
               style={{ width: 220 }}
-              onClick={() => navigate("/estadisticas")}
+              onClick={() => navigate("/historial-clinico")}
             >
               <BarChartOutlined style={{ fontSize: 40, color: "#722ed1" }} />
-              <p className="mt-3">Indicadores y reportes</p>
+              <p className="mt-3">Consultas realizadas</p>
             </Card>
             <Card
               title="Disponibilidad"
@@ -108,20 +107,16 @@ function HomeProfesional({ user }) {
               <ScheduleOutlined style={{ fontSize: 40, color: "#4096ff" }} />
               <p className="mt-3">Horario de atención</p>
             </Card>
+            <Card
+              title="Notas y Pendientes"
+              hoverable
+              style={{ width: 220 }}
+              onClick={() => navigate("/notas")}
+            >
+              <FileTextOutlined style={{ fontSize: 40, color: "#52c41a" }} />
+              <p className="mt-3">Gestión diaria</p>
+            </Card>
           </Space>
-        </Col>
-
-        {/* 💸 Facturación (separado) */}
-        <Col span={24}>
-          <Title level={4}>💸 Facturación</Title>
-          <Card
-            hoverable
-            style={{ width: 220 }}
-            onClick={() => navigate("/facturacion")}
-          >
-            <DollarOutlined style={{ fontSize: 40, color: "#ff4d4f" }} />
-            <p className="mt-3">Acceso al portal de pagos</p>
-          </Card>
         </Col>
       </Row>
     </div>

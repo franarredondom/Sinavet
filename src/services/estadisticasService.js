@@ -1,30 +1,51 @@
-import { db } from "./firebaseConfig"; // <- corregido según tu estructura
-import {
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { db } from "./firebaseConfig";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import dayjs from "dayjs";
 
 export const obtenerEstadisticasClinicas = async () => {
-  const pacientesSnapshot = await getDocs(collection(db, "pacientes"));
-  const consultasSnapshot = await getDocs(collection(db, "consultas"));
+  const pacientesSnap = await getDocs(collection(db, "pacientes"));
+  const consultasSnap = await getDocs(collection(db, "consultas"));
 
-  const totalPacientes = pacientesSnapshot.size;
-  const totalConsultas = consultasSnapshot.size;
+  const totalPacientes = pacientesSnap.size;
+  const totalConsultas = consultasSnap.size;
 
-  const consultasPorMesMap = {};
-  consultasSnapshot.forEach((doc) => {
-    const fecha = doc.data().fechaConsulta?.toDate?.() || new Date();
-    const mes = fecha.toLocaleDateString("es-CL", { month: "short", year: "numeric" });
-    consultasPorMesMap[mes] = (consultasPorMesMap[mes] || 0) + 1;
-  });
+  // Consultas por mes
+  const porMes = {};
+  const historialConsultas = [];
 
-  const consultasPorMes = Object.entries(consultasPorMesMap).map(([mes, total]) => ({
-    mes,
-    total,
-  }));
+  for (const docSnap of consultasSnap.docs) {
+    const data = docSnap.data();
+    const fecha = data.fechaConsulta?.toDate?.() || new Date();
+    const mes = dayjs(fecha).format("MMM YYYY");
+    porMes[mes] = (porMes[mes] || 0) + 1;
 
+    let nombreMascota = "Desconocida";
+    if (data.mascotaId) {
+      try {
+        const mascotaDoc = await getDoc(doc(db, "mascotas", data.mascotaId));
+        if (mascotaDoc.exists()) {
+          nombreMascota = mascotaDoc.data().nombre || "Desconocida";
+        }
+      } catch {}
+    }
+
+    historialConsultas.push({
+      id: docSnap.id,
+      fecha: dayjs(fecha).format("DD/MM/YYYY"),
+      mascota: nombreMascota,
+      motivo: data.motivo || "—",
+      profesional: data.profesional || "—",
+      servicios: data.servicios || [],
+    });
+  }
+
+  const consultasPorMes = Object.entries(porMes)
+    .map(([mes, total]) => ({ mes, total }))
+    .sort((a, b) => dayjs(a.mes, "MMM YYYY").toDate() - dayjs(b.mes, "MMM YYYY").toDate());
+
+  // Servicios populares
   const contadorServicios = {};
-  consultasSnapshot.forEach((doc) => {
+  consultasSnap.docs.forEach((doc) => {
     const servicios = doc.data().servicios || [];
     servicios.forEach((s) => {
       contadorServicios[s] = (contadorServicios[s] || 0) + 1;
@@ -36,8 +57,9 @@ export const obtenerEstadisticasClinicas = async () => {
     .sort((a, b) => b.total - a.total)
     .slice(0, 5);
 
+  // Razas comunes
   const contadorRazas = {};
-  pacientesSnapshot.forEach((doc) => {
+  pacientesSnap.docs.forEach((doc) => {
     const raza = doc.data().raza;
     if (raza) {
       contadorRazas[raza] = (contadorRazas[raza] || 0) + 1;
@@ -55,5 +77,7 @@ export const obtenerEstadisticasClinicas = async () => {
     consultasPorMes,
     serviciosPopulares,
     razasComunes,
+    historialConsultas,
   };
 };
+c

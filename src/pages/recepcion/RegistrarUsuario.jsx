@@ -46,19 +46,29 @@ function RegistrarUsuario() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const {
+      role, rut, fullName, email, password, confirm,
+      phone, address, specialty, level, startDate
+    } = form;
 
-    const { role, rut, fullName, email, password, confirm, phone, address, specialty, level, startDate } = form;
     if (!role) return mostrarError("Debes seleccionar un rol.");
     if (!validarRUT(rut)) return mostrarError("RUT inválido.");
     if (password !== confirm) return mostrarError("Las contraseñas no coinciden.");
     if (role === "profesional" && (!specialty || !level || !startDate)) {
-      return mostrarError("Faltan campos profesionales.");
+      return mostrarError("Faltan campos obligatorios para el rol profesional.");
     }
 
     try {
       const rutID = rut.replaceAll(".", "").replaceAll("-", "").toUpperCase();
       const ref = doc(db, "usuarios", rutID);
-      if ((await getDoc(ref)).exists()) return mostrarError("Ya existe este usuario.");
+
+      // ⏱ Timeout de seguridad
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Tiempo de espera agotado para verificar usuario.")), 5000)
+      );
+      const docSnap = await Promise.race([getDoc(ref), timeout]);
+
+      if (docSnap.exists()) return mostrarError("Ya existe este usuario en la base de datos.");
 
       await createUserWithEmailAndPassword(auth, email, password);
 
@@ -73,14 +83,22 @@ function RegistrarUsuario() {
       };
 
       await setDoc(ref, data);
+
       Modal.success({
-        title: "Usuario registrado",
-        content: "El usuario fue creado correctamente.",
+        title: "✅ Usuario creado exitosamente",
+        content: `Se ha registrado el usuario ${fullName} (${role}).`,
         onOk: () => navigate("/home-recepcion"),
       });
     } catch (err) {
-      mostrarError("Ocurrió un error. Intenta nuevamente.");
-      console.error(err);
+      console.error("Error al registrar usuario:", err);
+      let mensaje = "Ocurrió un error inesperado.";
+
+      if (err.code === "auth/email-already-in-use") mensaje = "El correo electrónico ya está registrado.";
+      if (err.code === "auth/invalid-email") mensaje = "El correo no es válido.";
+      if (err.code === "auth/weak-password") mensaje = "La contraseña debe tener al menos 6 caracteres.";
+      if (err.message?.includes("Tiempo de espera agotado")) mensaje = "No se pudo conectar con la base de datos.";
+
+      mostrarError(mensaje);
     }
   };
 
@@ -88,7 +106,6 @@ function RegistrarUsuario() {
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-indigo-600 mb-4">Registrar Usuario</h1>
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow">
-
         <select value={form.role} onChange={(e) => handleChange("role", e.target.value)} required className="w-full p-2 border rounded">
           <option value="">Seleccionar rol</option>
           <option value="tutor">Tutor</option>

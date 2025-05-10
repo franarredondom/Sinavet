@@ -7,7 +7,7 @@ import {
   doc,
   updateDoc,
   getDoc,
-  Timestamp
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConfig";
 import { Table, Button, Tag, message, Spin } from "antd";
@@ -16,13 +16,12 @@ function CitasDia() {
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fechaHoy = new Date().toISOString().split("T")[0]; // Ej: 2025-05-07
-
   useEffect(() => {
     const obtenerCitas = async () => {
       try {
-        const inicioDia = new Date(`${fechaHoy}T00:00:00`);
-        const finDia = new Date(`${fechaHoy}T23:59:59`);
+        const ahora = new Date(); // hora local
+        const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 0, 0, 0);
+        const finDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 23, 59, 59);
 
         const q = query(
           collection(db, "citas"),
@@ -46,10 +45,21 @@ function CitasDia() {
               }
             }
 
+            // Obtener nombre del profesional
+            let nombreProfesional = data.profesional || "Sin profesional";
+            if (data.profesional) {
+              const profesionalRef = doc(db, "profesionales", data.profesional);
+              const profesionalSnap = await getDoc(profesionalRef);
+              if (profesionalSnap.exists()) {
+                nombreProfesional = profesionalSnap.data().fullName || "Sin nombre";
+              }
+            }
+
             return {
               id: docSnap.id,
               ...data,
-              nombreMascota
+              nombreMascota,
+              nombreProfesional,
             };
           })
         );
@@ -64,7 +74,7 @@ function CitasDia() {
     };
 
     obtenerCitas();
-  }, [fechaHoy]);
+  }, []);
 
   const marcarLlegada = async (id) => {
     try {
@@ -84,12 +94,12 @@ function CitasDia() {
     {
       title: "Mascota",
       dataIndex: "nombreMascota",
-      key: "nombreMascota"
+      key: "nombreMascota",
     },
     {
       title: "Motivo",
       dataIndex: "motivo",
-      key: "motivo"
+      key: "motivo",
     },
     {
       title: "Hora",
@@ -97,13 +107,16 @@ function CitasDia() {
       key: "fecha",
       render: (fecha) =>
         fecha?.seconds
-          ? new Date(fecha.seconds * 1000).toLocaleTimeString()
-          : "-"
+          ? new Date(fecha.seconds * 1000).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "-",
     },
     {
       title: "Profesional",
-      dataIndex: "profesional",
-      key: "profesional"
+      dataIndex: "nombreProfesional",
+      key: "nombreProfesional",
     },
     {
       title: "Estado",
@@ -113,7 +126,7 @@ function CitasDia() {
           <Tag color="green">Llegó</Tag>
         ) : (
           <Tag color="orange">Pendiente</Tag>
-        )
+        ),
     },
     {
       title: "Acción",
@@ -125,8 +138,8 @@ function CitasDia() {
           </Button>
         ) : (
           <Button disabled>Ya llegó</Button>
-        )
-    }
+        ),
+    },
   ];
 
   return (
