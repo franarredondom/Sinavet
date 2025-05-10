@@ -1,12 +1,66 @@
-# React + Vite
+# 🐾 Sinavet - Sistema de Gestión Veterinaria
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Sinavet** es una plataforma web desarrollada para facilitar la gestión clínica, administrativa y de laboratorio en una clínica veterinaria. Está diseñada para ser utilizada por distintos roles como **tutores**, **profesionales veterinarios**, **laboratorio** y **recepción**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Funcionalidades Principales
 
-## Expanding the ESLint configuration
+### 🧑‍⚕️ Profesional
+- Gestión de agenda médica y pacientes
+- Consulta médica con historial clínico
+- Carga y revisión de exámenes
+- Control de inventario y notas clínicas
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🧪 Laboratorio
+- Visualización de exámenes solicitados
+- Registro y subida de resultados
+- Estados de exámenes (pendiente/completado)
+
+### 💁 Recepción
+- Gestión de citas del día
+- Registro de nuevos usuarios (Tutor, Profesional, Laboratorio)
+- Agendamiento de citas
+- Portal de pagos (simulación Transbank)
+
+### 🧍 Tutor
+- Registro y administración de mascotas
+- Consulta de historial clínico
+- Visualización y descarga de boletas
+- Resultados de exámenes
+- Contacto con la clínica
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+- **React** + **Vite** para el frontend
+- **Ant Design** + **Tailwind CSS** para la interfaz
+- **Firebase** (Firestore, Auth) como backend y base de datos
+- **jsPDF** para generación de boletas PDF
+
+---
+
+## 🔐 Roles y Acceso
+
+| Rol         | Funcionalidades Clave                               |
+|-------------|-----------------------------------------------------|
+| Tutor       | Ver historial, mascotas, exámenes, contacto         |
+| Profesional | Fichas clínicas, inventario, consulta, notas        |
+| Laboratorio | Subida y gestión de exámenes                        |
+| Recepción   | Agenda diaria, usuarios, pagos                      |
+
+---
+
+## 📦 Instalación y Uso Local
+
+```bash
+# Clona el repositorio
+git clone https://github.com/franarredondom/Sinavet.git
+cd Sinavet
+
+# Instala dependencias
+npm install
+
+# Ejecuta en modo desarrollo
+npm run dev
